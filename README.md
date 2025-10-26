@@ -1,3 +1,8 @@
+# Next todos
+1. Problem: Mason depends on npm which costs a few MB disk space. Need to get rid of Mason and install LSP directlly (with Lazy).
+1. Set up Python LSP for running and debugging.
+1. Add Latex LSP support
+
 # Neovim Keybinds Documentation
 
 This document provides a simple and organized overview of all the custom keybinds defined in my Neovim configuration.
