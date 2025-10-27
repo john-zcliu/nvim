@@ -1,7 +1,4 @@
 return {
-    { -- This helps with php/html for indentation
-        'captbaritone/better-indent-support-for-php-with-html',
-    },
     { -- This helps with ssh tunneling and copying to clipboard
         'ojroques/vim-oscyank',
     },
@@ -21,4 +18,6 @@ return {
             require('nvim-highlight-colors').setup({})
         end
     },
+    { 'prichrd/netrw.nvim',  opts = {} },
+    { 'nvim-mini/mini.nvim', version = false },
 }

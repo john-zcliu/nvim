@@ -1,7 +1,9 @@
 # Next todos
-1. Problem: Mason depends on npm which costs a few MB disk space. Need to get rid of Mason and install LSP directlly (with Lazy).
-1. Set up Python LSP for running and debugging.
-1. Add Latex LSP support
+1. Install Ruff and Black with Mason
+1. Research Python/C++ interactive debugging support
+1. Add markdown previewer
+1. Add LS for Latex and pdf viewer
+Watch this video: https://www.youtube.com/watch?v=4BnVeOUeZxc
 
 # Neovim Keybinds Documentation
 
@@ -120,3 +122,134 @@ Below is a running list of what and how to install the lsp's that are going to b
 4. { typescript-language-server }
   - npm install -g typescript-language-server typescript
 
+
+
+
+That's a fantastic goal. The most reliable and simple way to ensure your Neovim plugins (like `nvim-lspconfig` and `conform.nvim`) know the correct Conda paths is to use the **`nvim-conda`** plugin.
+
+This plugin handles the complex shell activation logic for you, making your LSP and formatter executables available inside Neovim without manual path manipulation.
+
+Here is the complete guide.
+
+-----
+
+## 🐍 Part 1: Conda Setup and Package Installation
+
+First, you need a dedicated environment for your editor tools and the necessary Python packages.
+
+### Step 1: Create and Activate the Environment
+
+Open your terminal and create a new Conda environment. This is where your language server and formatter will live.
+
+```bash
+# 1. Create a new environment (e.g., nvim-lsp)
+conda create -n nvim-lsp python=3.11 -y
+
+# 2. Activate it (You'll only do this once for the install)
+conda activate nvim-lsp
+```
+
+### Step 2: Install LSP and Formatter Tools
+
+While the `nvim-lspconfig` plugin uses the name `pyright` for its configuration, you need to install the actual Python packages inside this environment. We also install `pynvim` for better general Python provider support in Neovim.
+
+```bash
+# Install the core tools
+pip install pyright black pynvim
+```
+
+### Step 3: Deactivate the Environment
+
+Go back to your base shell environment before opening Neovim.
+
+```bash
+conda deactivate
+```
+
+-----
+
+## ⚙️ Part 2: Neovim Plugin Configuration (using LazyVim)
+
+You'll add two key plugins: **`nvim-conda`** to manage the paths, and **`conform.nvim`** for formatting. `nvim-lspconfig` is usually already part of your LazyVim setup.
+
+### 1\. Install `nvim-conda`
+
+Add this to your `lazy.nvim` specification (e.g., in your `plugins/` directory or `init.lua`):
+
+```lua
+-- lua/plugins/conda.lua
+return {
+    "kmontocam/nvim-conda",
+    dependencies = {
+        "nvim-lua/plenary.nvim", -- A common utility dependency
+    },
+    -- Auto-activate the environment when you open a Python file
+    config = function()
+        require("nvim-conda").setup({
+            auto_activate = true,
+            -- Use the dedicated environment we created in Part 1
+            default_env = "nvim-lsp", 
+        })
+    end,
+}
+```
+
+### 2\. Configure Pyright LSP
+
+With `nvim-conda` active, Neovim will automatically pick up `pyright` from the activated environment's PATH. You don't need a special path configuration for this to work.
+
+If you were customizing your `pyright` setup, it would look like this (but should work fine without specific path changes):
+
+```lua
+-- This assumes you are configuring LSP servers separately
+require('lspconfig').pyright.setup({
+    -- Pyright will inherit the PATH from the activated nvim-lsp environment
+    -- to find its executable and resolve packages.
+    settings = {
+        python = {
+            analysis = {
+                typeCheckingMode = "basic", -- Recommended setting
+            }
+        }
+    }
+})
+```
+
+### 3\. Configure Black Formatter
+
+Use `conform.nvim` to execute `black` from the Conda environment.
+
+```lua
+-- lua/plugins/conform.lua
+return {
+    "stevearc/conform.nvim",
+    event = "BufWritePost",
+    config = function()
+        require("conform").setup({
+            formatters_by_ft = {
+                python = { "black" }, -- It will find 'black' in the activated Conda PATH
+            },
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_fallback = true,
+            },
+        })
+    end,
+}
+```
+
+-----
+
+## ✅ Workflow: Launching Neovim
+
+After installing the plugins and packages, your workflow is now simple:
+
+1.  **Open Neovim** (`nvim`).
+2.  **Open a Python file** (`my_project.py`).
+3.  The **`nvim-conda`** plugin detects the filetype and automatically runs the equivalent of `conda activate nvim-lsp` *within Neovim's session*.
+4.  `nvim-lspconfig` then launches the `pyright` server, which uses the now-correct path to find the Pyright executable and resolve all your Python dependencies from the activated `nvim-lsp` environment.
+
+This method eliminates the need for any manual path manipulation in your Lua config files.
+
+If you'd like a visual guide on setting up Python tools in Neovim, [Setting up Python for Neovim: conda and flake8](https://www.youtube.com/watch?v=CKl336ffqC8) demonstrates configuring a similar setup with Conda.
+http://googleusercontent.com/youtube_content/2

@@ -127,6 +127,12 @@ return {
                         },
                     })
                 end,
+
+                pyright = function()
+                    require('lspconfig').pyright.setup({})
+                    -- nvim-lspconfig will now look for the 'pyright' executable in the
+                    -- current PATH, which nvim-conda will ensure is the Conda path.
+                end,
             },
         })
 
