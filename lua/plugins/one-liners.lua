@@ -19,5 +19,6 @@ return {
         end
     },
     { 'prichrd/netrw.nvim',  opts = {} },
-    { 'nvim-mini/mini.nvim', version = false },
+    { 'folke/twilight.nvim', },
+    { 'folke/zen-mode.nvim', },
 }

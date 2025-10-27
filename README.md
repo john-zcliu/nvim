@@ -5,6 +5,14 @@
 1. Add LS for Latex and pdf viewer
 Watch this video: https://www.youtube.com/watch?v=4BnVeOUeZxc
 
+# System-level dependencies
+* xclip -- for accessing clipboard
+* nodejs, npm -- for Mason (LSP manager)
+* fzf, ripgrep, fd-find -- for fuzzy finding
+
+## System-level python packages
+* pyright, black, pynvim -- for LSP, linting and formatting
+
 # Neovim Keybinds Documentation
 
 This document provides a simple and organized overview of all the custom keybinds defined in my Neovim configuration.
@@ -73,7 +81,7 @@ This document provides a simple and organized overview of all the custom keybind
 | Mode | Key             | Action                                                                                      |
 |------|-----------------|---------------------------------------------------------------------------------------------|
 | `n`  | `<leader>a`     | Add current file to Harpoon list                                                            |
-| `n`  | `<C-e>`         | Toggle Harpoon quick menu                                                                   |
+| `n`  | `<leader>h`     | Toggle Harpoon quick menu                                                                   |
 | `n`  | `<leader>fl`    | Open Harpoon window with Telescope                                                          |
 | `n`  | `<C-p>`         | Go to previous Harpoon mark                                                                 |
 | `n`  | `<C-n>`         | Go to next Harpoon mark                                                                     |
@@ -95,6 +103,19 @@ This document provides a simple and organized overview of all the custom keybind
 | `n`       | `<F2>`     | Rename symbol                                                                               |
 | `n`, `x`  | `<F3>`     | Format code asynchronously                                                                 |
 | `n`       | `<F4>`     | Show code actions                                                                           |
+
+<!-- TODO: convert this csv into md table: -->
+
+Keymap (Normal Mode),Action,Function,Description
+<leader>dc,Continue/Start,dap.continue(),Runs/Continues the debug session. Starts the session if one isn't active.
+<leader>db,Toggle Breakpoint,dap.toggle_breakpoint(),Sets or removes a breakpoint on the current line.
+<leader>di,Step Into,dap.step_into(),Executes the current line and jumps into a function call.
+<leader>dO,Step Over,dap.step_over(),Executes the current line and steps over any function calls.
+<leader>do,Step Out,dap.step_out(),Continues execution until the current function returns.
+<leader>dt,Terminate,dap.terminate(),Stops the entire debug session.
+<leader>du,Toggle UI,dapui.toggle({}),"Opens or closes the DAP UI windows (Scopes, Stacks, etc.)."
+<leader>dr,Toggle REPL,dap.repl.toggle(),Opens the debugger REPL window for interactive evaluation.
+<leader>de,Evaluate,dapui.eval(),Evaluates the word under the cursor (or visual selection) and shows the value.
 
 ---
 
